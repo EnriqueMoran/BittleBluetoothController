@@ -1,3 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PetoiBittleBluetoothController</string>
+    <string name="paired_devices">Paired devices</string>
+    <string name="instructions">How to use</string>
+    <string name="madeBy">Made by @EnriqueMoran</string>
+    <string name="paired_devices_text">Select Bittle to connect:</string>
+    <string name="instructions_details">
+        <b>Pairing Bittle to your Android device:\n\n</b>
+        \t\t1. Swipe down from the top of the screen.\n
+        \t\t2. Touch and hold Bluetooth icon.\n
+        \t\t3. Tap <i>Pair new device</i>.\n
+        \t\t4. Tap the name of Bittle.\n
+        \t\t5. Use the following pin code: <i>0000</i> or <i>1234</i>.\n\n\n\n
+
+        <b>Connecting to Bittle:\n\n</b>
+        \t\t1. In this App, tap <i>PAIRED DEVICES</i> button.\n
+        \t\t2. Select Bittle in paired devices list.\n\n\n\n
+
+        <b>Controlling Bittle:\n\n</b>
+        \t\tUse the Joystick to control Bittle\'s movement.\n
+        \t\tTap <i>REST</i> to turn off Bittle\'s servos.\n
+        \t\tTap <i>GYRO</i> to turn on/off Bittle\'s gyroscope.\n
+        \t\tTap <i>STAND</i> to put Bittle in it\'s neutral standing posture.\n
+        \t\tTap <i>STEP</i> to make Bittle step in it\'s current position.\n
+        \t\tTap <i>CRAWL</i> to set crawling gait.\n
+        \t\tTap <i>WALK</i> to set walking gait.\n
+        \t\tTap <i>TROT</i> to set trotting gait.\n
+        \t\tTap <i>DISCONNECT</i> to turn off Bittle\'s servos and exit.
+    </string>
 </resources>

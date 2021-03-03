@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:keepScreenOn="true"
     tools:context=".MainActivity">
 
     <com.example.petoibittlebluetoothcontroller.JoystickView
@@ -98,6 +99,16 @@
         app:layout_constraintStart_toEndOf="@+id/btCrawl"
         app:layout_constraintTop_toBottomOf="@+id/btGyro"
         app:layout_constraintVertical_bias="0.01" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:text="Stand"
+        app:layout_constraintStart_toEndOf="@+id/joystickLeft"
+        app:layout_constraintTop_toBottomOf="@+id/btCrawl" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

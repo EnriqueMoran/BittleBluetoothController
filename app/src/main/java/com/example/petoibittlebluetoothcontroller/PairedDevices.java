@@ -33,7 +33,7 @@ public class PairedDevices extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_pairing);
+        setContentView(R.layout.activity_device_paired);
     }
 
     public void onResume() {
