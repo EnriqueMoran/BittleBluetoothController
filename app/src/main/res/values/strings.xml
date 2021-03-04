@@ -18,14 +18,14 @@
         \t\t2. Select Bittle in paired devices list.\n\n\n\n
 
         <b>Controlling Bittle:\n\n</b>
-        \t\tUse the Joystick to control Bittle\'s movement.\n
-        \t\tTap <i>REST</i> to turn off Bittle\'s servos.\n
-        \t\tTap <i>GYRO</i> to turn on/off Bittle\'s gyroscope.\n
-        \t\tTap <i>STAND</i> to put Bittle in it\'s neutral standing posture.\n
-        \t\tTap <i>STEP</i> to make Bittle step in it\'s current position.\n
-        \t\tTap <i>CRAWL</i> to set crawling gait.\n
-        \t\tTap <i>WALK</i> to set walking gait.\n
-        \t\tTap <i>TROT</i> to set trotting gait.\n
-        \t\tTap <i>DISCONNECT</i> to turn off Bittle\'s servos and exit.
+        \t\t· Use the Joystick to control Bittle\'s movement.\n
+        \t\t· Tap <i>REST</i> to turn off Bittle\'s servos.\n
+        \t\t· Tap <i>GYRO</i> to turn on/off Bittle\'s gyroscope.\n
+        \t\t· Tap <i>STAND</i> to put Bittle in it\'s neutral standing posture.\n
+        \t\t· Tap <i>STEP</i> to make Bittle step in it\'s current position.\n
+        \t\t· Tap <i>CRAWL</i> to set crawling gait.\n
+        \t\t· Tap <i>WALK</i> to set walking gait.\n
+        \t\t· Tap <i>TROT</i> to set trotting gait.\n
+        \t\t· Tap <i>DISCONNECT</i> to turn off Bittle\'s servos and exit.
     </string>
 </resources>

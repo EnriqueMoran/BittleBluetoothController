@@ -8,6 +8,17 @@
     android:keepScreenOn="true"
     tools:context=".MainActivity">
 
+    <ProgressBar
+        android:id="@+id/idProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.example.petoibittlebluetoothcontroller.JoystickView
         android:id="@+id/joystickLeft"
         android:layout_width="208dp"
@@ -101,7 +112,7 @@
         app:layout_constraintVertical_bias="0.01" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btStand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"

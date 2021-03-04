@@ -55,6 +55,7 @@ public class TitleActivity extends AppCompatActivity {
         guideButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(TitleActivity.this, InstructionsActivity.class);
+                // Intent intent = new Intent(TitleActivity.this, MainActivity.class);
                 startActivityForResult(intent, 1);
             }
         });

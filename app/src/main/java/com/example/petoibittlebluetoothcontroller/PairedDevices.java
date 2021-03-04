@@ -11,11 +11,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.Timer;
 
 /*************************************************************************************************
  *  CODE TAKEN FROM https://www.youtube.com/watch?v=YqNIN4t7IuM&t=1689s&ab_channel=INNOVADOMOTICS
@@ -26,7 +28,6 @@ public class PairedDevices extends AppCompatActivity {
     private static final String TAG = "PairedDevices";
     ListView idList;
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
-
     private BluetoothAdapter m_bt_adapter;
     private ArrayAdapter m_paired_devices;
 
@@ -62,9 +63,7 @@ public class PairedDevices extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             String info = ((TextView) view).getText().toString();
             String address = info.substring(info.length() - 17);
-
             finishAffinity();
-
             Intent intent = new Intent(PairedDevices.this, MainActivity.class);
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
             startActivity(intent);
