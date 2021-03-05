@@ -72,7 +72,12 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     // Instruction map, values must be the same as in your OpenCat.h file!
     private HashMap<Command, String> instructionMap = new HashMap<Command, String>();
 
-    private Command lastDirection;  // Used to send new direction movement command
+    private Command lastDirection;  // Used to check whether send new direction movement command
+    private Command newDirection;  // Register new direction so send
+    private Command currentGait;
+    private long directionPerSecondLimit = 1500;  // Send one direction command each 1.5 seconds
+    private boolean isBittleReady = false;
+    private String bittleConnectionStatus;  // Store Bittle connection initialization messages
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         setContentView(R.layout.activity_main);
 
         // Initialize instruction map
-        instructionMap.put(Command.REST, "kd");
+        instructionMap.put(Command.REST, "d");
         instructionMap.put(Command.FORWARD, "F");
         instructionMap.put(Command.GYRO, "g");
         instructionMap.put(Command.LEFT, "L");
@@ -91,22 +96,24 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         instructionMap.put(Command.SHUTDOWN, "z");
         instructionMap.put(Command.BACKWARD, "B");
         instructionMap.put(Command.CALIBRATION, "c");
-        instructionMap.put(Command.STEP, "vt");
-        instructionMap.put(Command.CRAWL, "cr");
-        instructionMap.put(Command.WALK, "wk");
-        instructionMap.put(Command.TROT, "tr");
-        instructionMap.put(Command.LOOKUP, "lu");
-        instructionMap.put(Command.BUTTUP, "buttUp");
-        instructionMap.put(Command.RUN, "rn");
-        instructionMap.put(Command.BOUND, "bd");
-        instructionMap.put(Command.GREETING, "hi");
-        instructionMap.put(Command.PUSHUP, "pu");
-        instructionMap.put(Command.PEE, "pee");
-        instructionMap.put(Command.STRETCH, "str");
-        instructionMap.put(Command.SIT, "sit");
-        instructionMap.put(Command.ZERO, "zero");
+        instructionMap.put(Command.STEP, "kvt");
+        instructionMap.put(Command.CRAWL, "kcr");
+        instructionMap.put(Command.WALK, "kwk");
+        instructionMap.put(Command.TROT, "ktr");
+        instructionMap.put(Command.LOOKUP, "klu");
+        instructionMap.put(Command.BUTTUP, "kbuttUp");
+        instructionMap.put(Command.RUN, "krn");
+        instructionMap.put(Command.BOUND, "kbd");
+        instructionMap.put(Command.GREETING, "khi");
+        instructionMap.put(Command.PUSHUP, "kpu");
+        instructionMap.put(Command.PEE, "kpee");
+        instructionMap.put(Command.STRETCH, "kstr");
+        instructionMap.put(Command.SIT, "ksit");
+        instructionMap.put(Command.ZERO, "kzero");
 
         lastDirection = Command.BALANCE;
+        newDirection = Command.BALANCE;
+        currentGait = Command.WALK;
 
         progressBar = findViewById(R.id.idProgressBar);
         btDisconnect = findViewById(R.id.btDisconnect);
@@ -121,70 +128,83 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         // Set Buttons functionality
         btDisconnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                try {
-                    String text = instructionMap.get(Command.SHUTDOWN);
-                    myConnectionBt.write(text);
-                    btSocket.close();
-                } catch (IOException e) {
-                    Toast.makeText(getBaseContext(), "Error disconnecting Bluetooth", Toast.LENGTH_SHORT).show();
+                if (isBittleReady) {
+                    try {
+                        String text = instructionMap.get(Command.SHUTDOWN);
+                        myConnectionBt.write(text);
+                        isBittleReady = false;
+                        bittleConnectionStatus = "";
+                        btSocket.close();
+                    } catch (IOException e) {
+                        Toast.makeText(getBaseContext(), "Error disconnecting Bluetooth", Toast.LENGTH_SHORT).show();
+                    }
+                    finish();
                 }
-                finish();
             }
         });
 
         restButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = instructionMap.get(Command.REST);
-                myConnectionBt.write("text");
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.REST);
+                    myConnectionBt.write("text");
+                    Log.d("SENT", "Message sent. " + text);
+                }
             }
         });
 
         gyroButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = instructionMap.get(Command.GYRO);
-                myConnectionBt.write(text);
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.GYRO);
+                    myConnectionBt.write(text);
+                    Log.d("SENT", "Message sent. " + text);
+                }
             }
         });
 
         stepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = instructionMap.get(Command.STEP);
-                myConnectionBt.write(text);
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.STEP);
+                    myConnectionBt.write(text);
+                    Log.d("SENT", "Message sent. " + text);
+                }
             }
         });
 
         crawlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = instructionMap.get(Command.CRAWL);
-                myConnectionBt.write(text);
+                currentGait = Command.CRAWL;
             }
         });
 
         walkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = instructionMap.get(Command.WALK);
-                myConnectionBt.write(text);
+                currentGait = Command.WALK;
             }
         });
 
         trotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = instructionMap.get(Command.TROT);
-                myConnectionBt.write(text);
+                currentGait = Command.TROT;
             }
         });
 
         standButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String text = instructionMap.get(Command.BALANCE);
-                myConnectionBt.write(text);
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.BALANCE);
+                    myConnectionBt.write(text);
+                    Log.d("SENT", "Message sent. " + text);
+                }
             }
         });
 
@@ -192,49 +212,75 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         bluetoothIn = new Handler() {
           public void handleMessage(android.os.Message msg) {
               if(msg.what == handlerState) {
-                  Log.d("RECEIVED", (String) msg.obj.toString());
+                  String received =  msg.obj.toString();
+                  Log.d("RECEIVED", received);
+                  if (!isBittleReady) {
+                      bittleConnectionStatus = bittleConnectionStatus + received;
+                      boolean isFound = bittleConnectionStatus.indexOf("Finished!") !=-1? true: false; //true
+                      if (bittleConnectionStatus.length() > 10 && isFound) {
+                          isBittleReady = true;
+                          bittleConnectionStatus = "";
+                      }
+                  }
               }
           }
         };
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         verifyBTStatus();
+
+        final Handler handler = new Handler();
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                sendDirection();
+                handler.postDelayed(this, directionPerSecondLimit);
+            }
+        }, directionPerSecondLimit);
     }
 
     @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
         switch (id)
         {
-           /* case R.id.joystickRight:
-                Log.d("Right Joystick", "X percent: " + xPercent + " Y percent: " + yPercent);
-                break;*/
             case R.id.joystickLeft:
                 double angle = getAngle(xPercent, yPercent);
-                Command newDirection = getNewDirection(angle);
-                if (lastDirection != newDirection) {
-                    String text = instructionMap.get(newDirection);
-                    myConnectionBt.write(text);
-                    lastDirection = newDirection;
-                }
-                Log.d("Left Joystick", "X percent: " + xPercent + " Y percent: " +
-                        yPercent + " Angle: " + angle + " Direction: " + newDirection.toString());
+                newDirection = getNewDirection(angle);
+               // Log.d("Left Joystick", "X percent: " + xPercent + " Y percent: " +
+               //         yPercent + " Angle: " + angle + " Direction: " + newDirection.toString());
                 break;
         }
     }
 
-    private double getAngle(float xPercent, float yPercent) {
+    private void sendDirection() {
+        String text;
+        if (isBittleReady) {
+            if (lastDirection != newDirection) {
+                if (newDirection != Command.BALANCE) {
+                    text = instructionMap.get(currentGait) + instructionMap.get(newDirection);
+                } else {
+                    text = instructionMap.get(newDirection);
+                }
+                myConnectionBt.write(text);
+                lastDirection = newDirection;
+                Log.d("SENT", "Message sent. " + text);
+            }
+        }
+    }
+
+    private double getAngle(float xPercent, float yPercent) {  // Used 0.2 instead to give a margin
         double angle_deg = 0;
-        if (xPercent > 0 && yPercent > 0) {  // First quadrant
+        if (xPercent > 0 && yPercent > 0 && (xPercent > 0.2 || yPercent > 0.2)) {  // First quadrant
              double angle_rad = Math.atan2(xPercent, yPercent);
              angle_deg = angle_rad * 180 / Math.PI;
-        } else if (xPercent > 0 && yPercent < 0) {  // Second quadrant
+        } else if (xPercent > 0 && yPercent < 0 && (xPercent > 0.2 || yPercent < -0.2)) {  // Second quadrant
             double angle_rad = Math.atan2(xPercent, yPercent);
             angle_deg = angle_rad * 180 / Math.PI;
-        } else if (xPercent < 0 && yPercent < 0) {  // Third quadrant
+        } else if (xPercent < 0 && yPercent < 0 && (xPercent < -0.2 || yPercent < -0.2)) {  // Third quadrant
             double angle_rad = Math.atan2(xPercent, yPercent);
             angle_deg = angle_rad * 180 / Math.PI;
             angle_deg = 360 + angle_deg;
-        } else if (xPercent < 0 && yPercent > 0) {  // Fourth quadrant
+        } else if (xPercent < 0 && yPercent > 0 && (xPercent < -0.2 || yPercent > 0.2)) {  // Fourth quadrant
             double angle_rad = Math.atan2(xPercent, yPercent);
             angle_deg = angle_rad * 180 / Math.PI;
             angle_deg = 360 + angle_deg;
@@ -300,6 +346,8 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
         try {
             btSocket.close();
+            isBittleReady = false;
+            bittleConnectionStatus = "";
         } catch (IOException e) {
 
         }

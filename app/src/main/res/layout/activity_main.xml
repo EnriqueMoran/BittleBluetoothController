@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:keepScreenOn="true"
+    android:background="@drawable/gradient_1"
     tools:context=".MainActivity">
 
     <ProgressBar
