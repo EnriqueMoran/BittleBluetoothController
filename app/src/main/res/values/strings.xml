@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PetoiBittleBluetoothController</string>
+    <string name="title">Petoi Bittle Bluetooth Controller</string>
     <string name="paired_devices">Paired devices</string>
     <string name="instructions">How to use</string>
     <string name="madeBy">Made by @EnriqueMoran</string>
@@ -9,15 +10,15 @@
         <b>Pairing Bittle to your Android device:\n\n</b>
         \t\t1. Swipe down from the top of the screen.\n
         \t\t2. Touch and hold Bluetooth icon.\n
-        \t\t3. Tap <i>Pair new device</i>.\n
+        \t\t3. Tap <b>Connecting to Bittle:\n\n</b>.\n
         \t\t4. Tap the name of Bittle.\n
-        \t\t5. Use the following pin code: <i>0000</i> or <i>1234</i>.\n\n\n\n
+        \t\t5. Use the following pin code: <b>Controlling Bittle:\n\n</b> or <i>Pair new device</i>.\n\n\n\n
 
-        <b>Connecting to Bittle:\n\n</b>
-        \t\t1. In this App, tap <i>PAIRED DEVICES</i> button.\n
+        <i>0000</i>
+        \t\t1. In this App, tap <i>1234</i> button.\n
         \t\t2. Select Bittle in paired devices list.\n\n\n\n
 
-        <b>Controlling Bittle:\n\n</b>
+        <i>PAIRED DEVICES</i>
         \t\t· Use the Joystick to control Bittle\'s movement.\n
         \t\t· Tap <i>REST</i> to turn off Bittle\'s servos.\n
         \t\t· Tap <i>GYRO</i> to turn on/off Bittle\'s gyroscope.\n

@@ -9,118 +9,89 @@
     android:background="@drawable/gradient_1"
     tools:context=".MainActivity">
 
-    <ProgressBar
-        android:id="@+id/idProgressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.example.petoibittlebluetoothcontroller.JoystickView
         android:id="@+id/joystickLeft"
         android:layout_width="208dp"
         android:layout_height="206dp"
-        android:layout_marginStart="16dp"
         android:layout_weight="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.882" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="205dp" />
 
     <Button
         android:id="@+id/btRest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:text="Rest"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/joystickLeft"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.165" />
+        tools:layout_editor_absoluteX="504dp"
+        tools:layout_editor_absoluteY="119dp" />
 
     <Button
         android:id="@+id/btGyro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:text="Gyro"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btRest"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.165" />
+        tools:layout_editor_absoluteX="504dp"
+        tools:layout_editor_absoluteY="312dp" />
 
     <Button
         android:id="@+id/btStep"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:text="Step"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btGyro"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.165" />
+        tools:layout_editor_absoluteX="504dp"
+        tools:layout_editor_absoluteY="225dp" />
 
     <Button
         android:id="@+id/btCrawl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="60dp"
         android:text="Crawl"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/joystickLeft"
-        app:layout_constraintTop_toBottomOf="@+id/btRest"
-        app:layout_constraintVertical_bias="0.01" />
+        tools:layout_editor_absoluteX="622dp"
+        tools:layout_editor_absoluteY="225dp" />
 
     <Button
         android:id="@+id/btDisconnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
         android:text="Disconnect"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.191"
-        app:layout_constraintStart_toEndOf="@+id/joystickLeft"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.933" />
+        tools:layout_editor_absoluteX="622dp" />
 
     <Button
         android:id="@+id/btTrot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
+        android:layout_marginEnd="16dp"
         android:text="Trot"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btWalk"
-        app:layout_constraintTop_toBottomOf="@+id/btStep"
-        app:layout_constraintVertical_bias="0.243" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="52dp" />
 
     <Button
         android:id="@+id/btWalk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginEnd="16dp"
         android:text="Walk"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btCrawl"
-        app:layout_constraintTop_toBottomOf="@+id/btGyro"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="128dp" />
 
     <Button
         android:id="@+id/btStand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
         android:text="Stand"
-        app:layout_constraintStart_toEndOf="@+id/joystickLeft"
-        app:layout_constraintTop_toBottomOf="@+id/btCrawl" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="296dp" />
+
+    <ProgressBar
+        android:id="@+id/idProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

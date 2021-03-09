@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".InstructionsActivity"></activity>
-        <activity android:name=".TitleActivity">
+        <activity android:name=".TitleActivity"></activity>
+        <activity android:name=".InstructionsActivity" />
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,8 +25,8 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
 </manifest>

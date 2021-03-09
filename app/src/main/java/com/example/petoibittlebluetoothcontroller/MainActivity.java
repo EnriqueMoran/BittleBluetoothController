@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 enum Command {
     REST,
@@ -318,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         BluetoothDevice device = null;
 
         if(btAdapter != null) {
-            // address = "5C:BA:37:FA:08:4E";
+             // address = "5C:BA:37:FA:08:4E";
             device = btAdapter.getRemoteDevice(address);
         }
 
