@@ -6,6 +6,7 @@
     <string name="instructions">How to use</string>
     <string name="madeBy">Made by @EnriqueMoran</string>
     <string name="paired_devices_text">Select Bittle to connect:</string>
+    <string name="connectig_bluetooth">Connecting to Bittle</string>
     <string name="instructions_details">
         <b>Pairing Bittle to your Android device:\n\n</b>
         \t\t1. Swipe down from the top of the screen.\n

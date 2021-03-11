@@ -2,18 +2,23 @@ package com.example.petoibittlebluetoothcontroller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String address = null;
     private ProgressBar progressBar;
+    private TextView connectingText;
 
     private Button restButton;
     private Button gyroButton;
@@ -79,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private long directionPerSecondLimit = 1500;  // Send one direction command each 1.5 seconds
     private boolean isBittleReady = false;
     private String bittleConnectionStatus;  // Store Bittle connection initialization messages
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         currentGait = Command.WALK;
 
         progressBar = findViewById(R.id.idProgressBar);
+        connectingText = findViewById(R.id.idConnectingBluetooth);
         btDisconnect = findViewById(R.id.btDisconnect);
         restButton = findViewById(R.id.btRest);
         gyroButton = findViewById(R.id.btGyro);
@@ -125,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         walkButton = findViewById(R.id.btWalk);
         trotButton = findViewById(R.id.btTrot);
         standButton = findViewById(R.id.btStand);
+
+        Context context = this;
 
         // Set Buttons functionality
         btDisconnect.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             public void onClick(View view) {
                 if (isBittleReady) {
                     String text = instructionMap.get(Command.REST);
-                    myConnectionBt.write("text");
+                    myConnectionBt.write(text);
                     Log.d("SENT", "Message sent. " + text);
                 }
             }
@@ -211,20 +222,22 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
         // Set Bluetooth message receiver
         bluetoothIn = new Handler() {
-          public void handleMessage(android.os.Message msg) {
-              if(msg.what == handlerState) {
-                  String received =  msg.obj.toString();
-                  Log.d("RECEIVED", received);
-                  if (!isBittleReady) {
-                      bittleConnectionStatus = bittleConnectionStatus + received;
-                      boolean isFound = bittleConnectionStatus.indexOf("Finished!") !=-1? true: false; //true
-                      if (bittleConnectionStatus.length() > 10 && isFound) {
-                          isBittleReady = true;
-                          bittleConnectionStatus = "";
-                      }
-                  }
-              }
-          }
+            public void handleMessage(android.os.Message msg) {
+                if(msg.what == handlerState) {
+                    String received =  msg.obj.toString();
+                    Log.d("RECEIVED", received);
+                    if (!isBittleReady) {
+                        bittleConnectionStatus = bittleConnectionStatus + received;
+                        boolean isFound = bittleConnectionStatus.indexOf("Finished!") !=-1? true: false; //true
+                        if (bittleConnectionStatus.length() > 10 && isFound) {
+                            isBittleReady = true;
+                            bittleConnectionStatus = "";
+                            progressBar.setVisibility(View.GONE);  // TODO: check if works, if not, runOnUiThread
+                            connectingText.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            }
         };
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -247,8 +260,8 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             case R.id.joystickLeft:
                 double angle = getAngle(xPercent, yPercent);
                 newDirection = getNewDirection(angle);
-               // Log.d("Left Joystick", "X percent: " + xPercent + " Y percent: " +
-               //         yPercent + " Angle: " + angle + " Direction: " + newDirection.toString());
+                // Log.d("Left Joystick", "X percent: " + xPercent + " Y percent: " +
+                //         yPercent + " Angle: " + angle + " Direction: " + newDirection.toString());
                 break;
         }
     }
@@ -272,8 +285,8 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private double getAngle(float xPercent, float yPercent) {  // Used 0.2 instead to give a margin
         double angle_deg = 0;
         if (xPercent > 0 && yPercent > 0 && (xPercent > 0.2 || yPercent > 0.2)) {  // First quadrant
-             double angle_rad = Math.atan2(xPercent, yPercent);
-             angle_deg = angle_rad * 180 / Math.PI;
+            double angle_rad = Math.atan2(xPercent, yPercent);
+            angle_deg = angle_rad * 180 / Math.PI;
         } else if (xPercent > 0 && yPercent < 0 && (xPercent > 0.2 || yPercent < -0.2)) {  // Second quadrant
             double angle_rad = Math.atan2(xPercent, yPercent);
             angle_deg = angle_rad * 180 / Math.PI;
@@ -309,20 +322,24 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+        //return device.createInsecureRfcommSocketToServiceRecord(BTMODULEUUID);
     }
 
     public void onResume() {
         super.onResume();
-
         Intent intent = getIntent();
         address = intent.getStringExtra(PairedDevices.EXTRA_DEVICE_ADDRESS);
-        BluetoothDevice device = null;
 
+        Handler handler = new Handler();
+        Thread t = new Thread(
+                 new Runnable(){
+
+                 public void run() {
+        BluetoothDevice device = null;
         if(btAdapter != null) {
-             // address = "5C:BA:37:FA:08:4E";
+            // address = "5C:BA:37:FA:08:4E";
             device = btAdapter.getRemoteDevice(address);
         }
-
         try {
             btSocket = createBluetoothSocket(device);
         } catch (IOException e) {
@@ -337,9 +354,20 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             } catch (IOException e2) {
 
             }
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                    connectingText.setTextColor(Color.RED);
+                    connectingText.setText("Connection failed: " + e);
+                }
+            });
         }
         myConnectionBt = new ConnectedThread(btSocket);
         myConnectionBt.start();
+                }
+                }
+         );
+        t.start();
     }
 
     public void onPause() {
@@ -418,6 +446,4 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             }
         }
     }
-
 }
-

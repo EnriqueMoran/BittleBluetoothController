@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,12 +34,18 @@ public class BluetoothConnection extends Thread implements Runnable, Callback {
     private String bittleConnectionStatus;  // Store Bittle connection initialization messages
     private Activity activity;
 
-    BluetoothConnection(Activity activity) {
+    public BluetoothConnection(Activity activity, Context context) {
         this.activity = activity;
+        bluetoothCallback = (BluetoothConnectionListener) context;
     }
 
     public void run () {
-        bluetoothIn = new Handler() {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        verifyBTStatus();
+
+        Log.d("TEST", "callbac2k: " + bluetoothCallback.toString());
+
+        bluetoothIn = new Handler(Looper.getMainLooper()) {
             public void handleMessage(android.os.Message msg) {
                 if(msg.what == handlerState) {
                     String received =  msg.obj.toString();
@@ -56,9 +63,6 @@ public class BluetoothConnection extends Thread implements Runnable, Callback {
                 }
             }
         };
-
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        verifyBTStatus();
     }
 
     private void verifyBTStatus() {
@@ -74,6 +78,10 @@ public class BluetoothConnection extends Thread implements Runnable, Callback {
         }
     }
 
+    public void sendMessage(String text) {
+        myConnectionBt.write(text);
+    }
+
     public boolean isBittleReady() {
         return isBittleReady;
     }
@@ -85,30 +93,46 @@ public class BluetoothConnection extends Thread implements Runnable, Callback {
     public boolean connect(Intent intent) {
         boolean res = false;
         address = intent.getStringExtra(PairedDevices.EXTRA_DEVICE_ADDRESS);
-        BluetoothDevice device = null;
 
-        if(btAdapter != null) {
-            // address = "5C:BA:37:FA:08:4E";
-            device = btAdapter.getRemoteDevice(address);
-        }
+        Handler handler = new Handler();
+        Thread t = new Thread(
+                new Runnable(){
+                    public void run() {
+                        BluetoothDevice device = null;
 
-        try {
-            btSocket = createBluetoothSocket(device);
-        } catch (IOException e) {
-             Toast.makeText(activity.getBaseContext(), "Couldn't create socket.", Toast.LENGTH_LONG).show();
-        }
+                        Log.d("TEST", "address: " + address);
+                        Log.d("TEST", "callback: " + bluetoothCallback.toString());
 
-        try {
-            btSocket.connect();
-        } catch (IOException e) {
-            try {
-                btSocket.close();
-            } catch (IOException e2) {
+                        if(btAdapter != null) {
+                            address = "5C:BA:37:FA:08:4E";
+                            device = btAdapter.getRemoteDevice(address);
+                        }
+                        try {
+                            btSocket = createBluetoothSocket(device);
+                        } catch (IOException e) {
+                            Toast.makeText(activity.getBaseContext(), "Couldn't create socket.", Toast.LENGTH_LONG).show();
+                        }
 
-            }
-        }
-        myConnectionBt = new ConnectedThread(btSocket);
-        myConnectionBt.start();
+                        try {
+                            btSocket.connect();
+                            bluetoothCallback.onConnectionSuccess();
+                        } catch (IOException e) {
+                            try {
+                                btSocket.close();
+                            } catch (IOException e2) {
+
+                            }
+                            bluetoothCallback.onConnectionFail();
+                        }
+                        myConnectionBt = new ConnectedThread(btSocket);
+                        myConnectionBt.start();
+                    }
+                }
+        );
+
+        t.start();
+
+
         return res;
     }
 
@@ -118,12 +142,14 @@ public class BluetoothConnection extends Thread implements Runnable, Callback {
             isBittleReady = false;
             bittleConnectionStatus = "";
         } catch (IOException e) {
-
+            Toast.makeText(activity.getBaseContext(), "Error disconnecting Bluetooth", Toast.LENGTH_SHORT).show();
         }
     }
 
     public interface BluetoothConnectionListener {
         void onMessageReceived(String msg);
+        void onConnectionSuccess();
+        void onConnectionFail();
     }
 
     private class ConnectedThread extends Thread {
