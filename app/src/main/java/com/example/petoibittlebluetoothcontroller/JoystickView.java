@@ -12,6 +12,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+/**
+ * Author EnriqueMoran on 11/03/2021.
+ * https://github.com/EnriqueMoran
+ */
+
 /**************************************************************************
  *  CODE TAKEN FROM https://github.com/efficientisoceles/JoystickView
  *************************************************************************/

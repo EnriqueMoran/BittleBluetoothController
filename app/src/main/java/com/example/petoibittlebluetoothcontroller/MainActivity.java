@@ -2,7 +2,6 @@ package com.example.petoibittlebluetoothcontroller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -12,8 +11,8 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -26,8 +25,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Author EnriqueMoran on 11/03/2021.
+ * https://github.com/EnriqueMoran
+ */
 enum Command {
     REST,
     FORWARD,
@@ -54,20 +56,22 @@ enum Command {
     ZERO
 }
 
-public class MainActivity extends AppCompatActivity implements JoystickView.JoystickListener{
+public class MainActivity extends AppCompatActivity implements JoystickView.JoystickListener {
 
     Handler bluetoothIn;
     Button btDisconnect;
-    final int handlerState=0;
+    final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder dataStringIn = new StringBuilder();
     private ConnectedThread myConnectionBt;
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String address = null;
+    private String bittleConnectionStatus;  // Store Bittle connection initialization messages
+    private int n_attempts = 3;  // Max nº of attempts to establish Bittle connection
+
     private ProgressBar progressBar;
     private TextView connectingText;
-
     private Button restButton;
     private Button gyroButton;
     private Button stepButton;
@@ -84,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private Command currentGait;
     private long directionPerSecondLimit = 1500;  // Send one direction command each 1.5 seconds
     private boolean isBittleReady = false;
-    private String bittleConnectionStatus;  // Store Bittle connection initialization messages
-
 
 
     @Override
@@ -161,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                 if (isBittleReady) {
                     String text = instructionMap.get(Command.REST);
                     myConnectionBt.write(text);
-                    Log.d("SENT", "Message sent. " + text);
+                    Log.d("DEBUG", "Message sent: " + text);
                 }
             }
         });
@@ -172,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                 if (isBittleReady) {
                     String text = instructionMap.get(Command.GYRO);
                     myConnectionBt.write(text);
-                    Log.d("SENT", "Message sent. " + text);
+                    Log.d("DEBUG", "Message sent: " + text);
                 }
             }
         });
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                 if (isBittleReady) {
                     String text = instructionMap.get(Command.STEP);
                     myConnectionBt.write(text);
-                    Log.d("SENT", "Message sent. " + text);
+                    Log.d("DEBUG", "Message sent: " + text);
                 }
             }
         });
@@ -215,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                 if (isBittleReady) {
                     String text = instructionMap.get(Command.BALANCE);
                     myConnectionBt.write(text);
-                    Log.d("SENT", "Message sent. " + text);
+                    Log.d("DEBUG", "Message sent: " + text);
                 }
             }
         });
@@ -223,12 +225,12 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         // Set Bluetooth message receiver
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
-                if(msg.what == handlerState) {
-                    String received =  msg.obj.toString();
-                    Log.d("RECEIVED", received);
+                if (msg.what == handlerState) {
+                    String received = msg.obj.toString();
+                    Log.d("DEBUG", "Message received: " + received);
                     if (!isBittleReady) {
                         bittleConnectionStatus = bittleConnectionStatus + received;
-                        boolean isFound = bittleConnectionStatus.indexOf("Finished!") !=-1? true: false; //true
+                        boolean isFound = bittleConnectionStatus.indexOf("Finished!") != -1 ? true : false; //true
                         if (bittleConnectionStatus.length() > 10 && isFound) {
                             isBittleReady = true;
                             bittleConnectionStatus = "";
@@ -255,8 +257,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
     @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
-        switch (id)
-        {
+        switch (id) {
             case R.id.joystickLeft:
                 double angle = getAngle(xPercent, yPercent);
                 newDirection = getNewDirection(angle);
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                 }
                 myConnectionBt.write(text);
                 lastDirection = newDirection;
-                Log.d("SENT", "Message sent. " + text);
+                Log.d("DEBUG", "Message sent: " + text);
             }
         }
     }
@@ -322,7 +323,6 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-        //return device.createInsecureRfcommSocketToServiceRecord(BTMODULEUUID);
     }
 
     public void onResume() {
@@ -330,63 +330,78 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         Intent intent = getIntent();
         address = intent.getStringExtra(PairedDevices.EXTRA_DEVICE_ADDRESS);
 
-        Handler handler = new Handler();
+        Handler handler = new Handler();  // Do connection on background
         Thread t = new Thread(
-                 new Runnable(){
+                new Runnable() {
+                    public void run() {
+                        BluetoothDevice device = null;
+                        if (btAdapter != null) {
+                            // address = "5C:BA:37:FA:08:4E";  // Testing purposes
+                            device = btAdapter.getRemoteDevice(address);
+                        }
+                        try {
+                            btSocket = createBluetoothSocket(device);
+                        } catch (IOException e) {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    progressBar.setVisibility(View.GONE);
+                                    connectingText.setTextColor(Color.RED);
+                                    connectingText.setText("Connection failed! ");
+                                    Log.d("DEBUG", "Couldnt create socket: " + e);
+                                }
+                            });
+                        }
 
-                 public void run() {
-        BluetoothDevice device = null;
-        if(btAdapter != null) {
-            // address = "5C:BA:37:FA:08:4E";
-            device = btAdapter.getRemoteDevice(address);
-        }
-        try {
-            btSocket = createBluetoothSocket(device);
-        } catch (IOException e) {
-            Toast.makeText(getBaseContext(), "Couldn't create socket.", Toast.LENGTH_LONG).show();
-        }
-
-        try {
-            btSocket.connect();
-        } catch (IOException e) {
-            try {
-                btSocket.close();
-            } catch (IOException e2) {
-
-            }
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    progressBar.setVisibility(View.GONE);
-                    connectingText.setTextColor(Color.RED);
-                    connectingText.setText("Connection failed: " + e);
+                        if (!btSocket.isConnected()) {
+                            for (int i = 0; i < n_attempts; i++) {
+                                try {
+                                    SystemClock.sleep(5000);
+                                    btSocket.connect();
+                                } catch (IOException e) {
+                                    try {
+                                        btSocket.close();
+                                    } catch (IOException e2) { }
+                                    SystemClock.sleep(1000);
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            progressBar.setVisibility(View.GONE);
+                                            connectingText.setTextColor(Color.RED);
+                                            connectingText.setText("Connection failed! ");
+                                            Log.d("DEBUG", "Connection failed: " + e);
+                                        }
+                                    });
+                                }
+                                if (btSocket.isConnected()) { // Stop trying to reconnect
+                                    myConnectionBt = new ConnectedThread(btSocket);
+                                    myConnectionBt.start();
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
-            });
-        }
-        myConnectionBt = new ConnectedThread(btSocket);
-        myConnectionBt.start();
-                }
-                }
-         );
+        );
         t.start();
     }
 
     public void onPause() {
         super.onPause();
-
         try {
+            if(myConnectionBt != null) {
+                String text = instructionMap.get(Command.SHUTDOWN);
+                myConnectionBt.write(text);
+            }
             btSocket.close();
             isBittleReady = false;
             bittleConnectionStatus = "";
-        } catch (IOException e) {
-
-        }
+        } catch (IOException e) { }
     }
 
     private void verifyBTStatus() {
         if (btAdapter == null) {
             Toast.makeText(getBaseContext(), "Bluetooth not supported by device", Toast.LENGTH_LONG).show();
         } else {
-            if(btAdapter.isEnabled()) {
+            if (btAdapter.isEnabled()) {
 
             } else {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -436,12 +451,18 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         }
 
         public void resetConnection() {
-            if(mmInStream != null) {
-                try {mmInStream.close();} catch (Exception e) {}
+            if (mmInStream != null) {
+                try {
+                    mmInStream.close();
+                } catch (Exception e) {
+                }
                 mmInStream = null;
             }
-            if(mmOutStream != null) {
-                try {mmOutStream.close();} catch (Exception e) {}
+            if (mmOutStream != null) {
+                try {
+                    mmOutStream.close();
+                } catch (Exception e) {
+                }
                 mmOutStream = null;
             }
         }

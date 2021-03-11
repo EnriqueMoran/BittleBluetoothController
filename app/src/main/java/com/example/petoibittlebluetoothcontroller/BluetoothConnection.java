@@ -18,6 +18,10 @@ import java.util.UUID;
 
 import javax.security.auth.callback.Callback;
 
+/**
+ * Author EnriqueMoran on 11/03/2021.
+ * https://github.com/EnriqueMoran
+ */
 public class BluetoothConnection extends Thread implements Runnable, Callback {
 
     Handler bluetoothIn;

@@ -4,6 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+/**
+ * Author EnriqueMoran on 11/03/2021.
+ * https://github.com/EnriqueMoran
+ */
 public class InstructionsActivity extends AppCompatActivity {
 
     @Override

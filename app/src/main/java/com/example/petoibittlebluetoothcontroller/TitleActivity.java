@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * Author EnriqueMoran on 11/03/2021.
+ * https://github.com/EnriqueMoran
+ */
 public class TitleActivity extends AppCompatActivity {
 
     private TextView madeBy;
