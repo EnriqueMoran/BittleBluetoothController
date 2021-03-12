@@ -15,8 +15,11 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +62,6 @@ enum Command {
 public class MainActivity extends AppCompatActivity implements JoystickView.JoystickListener {
 
     Handler bluetoothIn;
-    Button btDisconnect;
     final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
     private ProgressBar progressBar;
     private TextView connectingText;
+    private Button btDisconnect;
     private Button restButton;
     private Button gyroButton;
     private Button stepButton;
@@ -79,6 +82,15 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private Button walkButton;
     private Button trotButton;
     private Button standButton;
+    private Button modeButton;
+    private Button runButton;
+    private Button sitButton;
+    private Button boundButton;
+    private Button stretchButton;
+    private Button zeroButton;
+    private Button peeButton;
+    private Button pushupButton;
+    private Button greetButton;
 
     // Instruction map, values must be the same as in your OpenCat.h file!
     private HashMap<Command, String> instructionMap = new HashMap<Command, String>();
@@ -86,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private Command lastDirection;  // Used to check whether send new direction movement command
     private Command newDirection;  // Register new direction so send
     private Command currentGait;
-    private long directionPerSecondLimit = 1500;  // Send one direction command each 1.5 seconds
+    private long directionPerSecondLimit = 500;  // Send one direction command each 1.5 seconds
     private boolean isBittleReady = false;
 
 
@@ -136,6 +148,15 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         walkButton = findViewById(R.id.btWalk);
         trotButton = findViewById(R.id.btTrot);
         standButton = findViewById(R.id.btStand);
+        modeButton = findViewById(R.id.btMode);
+        runButton = findViewById(R.id.btRun);
+        sitButton = findViewById(R.id.btSit);
+        boundButton = findViewById(R.id.btBound);
+        stretchButton = findViewById(R.id.btStretch);
+        zeroButton = findViewById(R.id.btZero);
+        peeButton = findViewById(R.id.btPee);
+        pushupButton = findViewById(R.id.btPushup);
+        greetButton = findViewById(R.id.btGreet);
 
         Context context = this;
 
@@ -144,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             public void onClick(View view) {
                 if (isBittleReady) {
                     try {
-                        String text = instructionMap.get(Command.SHUTDOWN);
+                        String text = instructionMap.get(Command.REST);
                         myConnectionBt.write(text);
                         isBittleReady = false;
                         bittleConnectionStatus = "";
@@ -222,6 +243,103 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             }
         });
 
+        modeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    // TODO
+                }
+            }
+        });
+
+        runButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.RUN);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
+        sitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.SIT);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
+        boundButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.BOUND);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
+        stretchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.STRETCH);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
+        zeroButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.ZERO);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
+        peeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.PEE);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
+        pushupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.PUSHUP);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
+        greetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isBittleReady) {
+                    String text = instructionMap.get(Command.GREETING);
+                    myConnectionBt.write(text);
+                    Log.d("DEBUG", "Message sent: " + text);
+                }
+            }
+        });
+
         // Set Bluetooth message receiver
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
@@ -234,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                         if (bittleConnectionStatus.length() > 10 && isFound) {
                             isBittleReady = true;
                             bittleConnectionStatus = "";
-                            progressBar.setVisibility(View.GONE);  // TODO: check if works, if not, runOnUiThread
+                            progressBar.setVisibility(View.GONE);
                             connectingText.setVisibility(View.GONE);
                         }
                     }
@@ -271,7 +389,10 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         String text;
         if (isBittleReady) {
             if (lastDirection != newDirection) {
-                if (newDirection != Command.BALANCE) {
+                if (newDirection == Command.BACKWARD) {
+                    text = "kbk";
+                }
+                else if (newDirection != Command.BALANCE) {
                     text = instructionMap.get(currentGait) + instructionMap.get(newDirection);
                 } else {
                     text = instructionMap.get(newDirection);
@@ -336,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                     public void run() {
                         BluetoothDevice device = null;
                         if (btAdapter != null) {
-                            // address = "5C:BA:37:FA:08:4E";  // Testing purposes
+                             // address = "5C:BA:37:FA:08:4E";  // Testing purposes
                             device = btAdapter.getRemoteDevice(address);
                         }
                         try {
@@ -344,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                         } catch (IOException e) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    progressBar.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.INVISIBLE);
                                     connectingText.setTextColor(Color.RED);
                                     connectingText.setText("Connection failed! ");
                                     Log.d("DEBUG", "Couldnt create socket: " + e);
@@ -364,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                                     SystemClock.sleep(1000);
                                     runOnUiThread(new Runnable() {
                                         public void run() {
-                                            progressBar.setVisibility(View.GONE);
+                                            progressBar.setVisibility(View.INVISIBLE);
                                             connectingText.setTextColor(Color.RED);
                                             connectingText.setText("Connection failed! ");
                                             Log.d("DEBUG", "Connection failed: " + e);
