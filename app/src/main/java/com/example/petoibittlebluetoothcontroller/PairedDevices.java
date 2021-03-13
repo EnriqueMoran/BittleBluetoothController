@@ -35,6 +35,7 @@ public class PairedDevices extends AppCompatActivity {
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private BluetoothAdapter m_bt_adapter;
     private ArrayAdapter m_paired_devices;
+    private boolean askedBLuetooth = false;  // Asky only once to enable bluetooth
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +83,18 @@ public class PairedDevices extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Bluetooth not supported by device.", Toast.LENGTH_SHORT).show();
         } else {
             if(m_bt_adapter.isEnabled()) {
-                Log.d(TAG, "BLuetooth already enabled");
+                Log.d(TAG, "Bluetooth already enabled");
             } else {
+                if(askedBLuetooth) {
+                    this.finishAffinity();
+                    System.exit(0);
+                }
                 Intent enable_BT_intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enable_BT_intent, 1);
+                askedBLuetooth = true;
             }
         }
     }
+
+
 }

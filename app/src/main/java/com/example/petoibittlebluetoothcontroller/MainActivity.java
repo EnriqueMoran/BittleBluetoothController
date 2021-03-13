@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private static String address = null;
     private String bittleConnectionStatus;  // Store Bittle connection initialization messages
     private int n_attempts = 3;  // Max nº of attempts to establish Bittle connection
+    private boolean askedBLuetooth = false;  // Asky only once to enable bluetooth
 
     private ProgressBar progressBar;
     private TextView connectingText;
@@ -457,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                     public void run() {
                         BluetoothDevice device = null;
                         if (btAdapter != null) {
-                             // address = "5C:BA:37:FA:08:4E";  // Testing purposes
+                            // address = "5C:BA:37:FA:08:4E";  // Testing purposes
                             device = btAdapter.getRemoteDevice(address);
                         }
                         try {
@@ -466,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     progressBar.setVisibility(View.INVISIBLE);
-                                    connectingText.setTextColor(Color.RED);
+                                    connectingText.setTextColor(Color.BLACK);
                                     connectingText.setText("Connection failed! ");
                                     Log.d("DEBUG", "Couldnt create socket: " + e);
                                 }
@@ -486,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
                                     runOnUiThread(new Runnable() {
                                         public void run() {
                                             progressBar.setVisibility(View.INVISIBLE);
-                                            connectingText.setTextColor(Color.RED);
+                                            connectingText.setTextColor(Color.BLACK);
                                             connectingText.setText("Connection failed! ");
                                             Log.d("DEBUG", "Connection failed: " + e);
                                         }
@@ -523,10 +524,14 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             Toast.makeText(getBaseContext(), "Bluetooth not supported by device", Toast.LENGTH_LONG).show();
         } else {
             if (btAdapter.isEnabled()) {
-
             } else {
+                if(askedBLuetooth) {
+                    this.finishAffinity();
+                    System.exit(0);
+                }
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, 1);
+                askedBLuetooth = true;
             }
         }
     }
