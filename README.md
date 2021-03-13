@@ -2,6 +2,7 @@
 Bluetooth controller for [Bittle](https://www.petoi.com/).
 
 This app allow you to fully control your pet through Bluetooth without any previous configuration but pairing it with your Android phone.
+Download Current version (v0.1) apk file in [Releases](https://github.com/EnriqueMoran/petoiBittleBluetoothController/releases/tag/v0.1) or [here](https://github.com/EnriqueMoran/petoiBittleBluetoothController/releases/download/v0.1/PetoiBittleBluetoothController.apk).
 
 ![alt tag](/readme_images/bittle_greeting.gif)
 
