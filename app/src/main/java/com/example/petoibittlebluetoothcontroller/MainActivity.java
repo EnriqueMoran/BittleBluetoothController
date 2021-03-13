@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private Command lastDirection;  // Used to check whether send new direction movement command
     private Command newDirection;  // Register new direction so send
     private Command currentGait;
-    private long directionPerSecondLimit = 500;  // Send one direction command each 1.5 seconds
+    private long directionPerSecondLimit = 500;  // Send one direction command each 0.5 seconds
     private boolean isBittleReady = false;
 
 
@@ -508,6 +508,19 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
     public void onPause() {
         super.onPause();
+        try {
+            if(myConnectionBt != null) {
+                String text = instructionMap.get(Command.SHUTDOWN);
+                myConnectionBt.write(text);
+            }
+            btSocket.close();
+            isBittleReady = false;
+            bittleConnectionStatus = "";
+        } catch (IOException e) { }
+    }
+
+    public void onStop() {
+        super.onStop();
         try {
             if(myConnectionBt != null) {
                 String text = instructionMap.get(Command.SHUTDOWN);
