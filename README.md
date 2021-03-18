@@ -21,6 +21,8 @@ Once your phone and Bittle are paired, you are ready to control it:
 3. Select Bittle (_BittleSPP-XXXXXXX_) and wait till the connection is stablished (Bittle will make the same sound it makes when turning on).
 4. Control Bittle with your phone!
 
+![alt tag](/readme_images/phone_view.png)
+
 ## Considerations
 * This is a Beta version, notice that you could encounter some issues while using it.
 * There is a 0.5 seconds delay when sending movement commands (to protect Bittle from performing actions too quickly). This delay can be modified in the code (in _MainActivity_, _directionPersecondLimit_ parameter) at your own risk.
@@ -31,7 +33,7 @@ Once your phone and Bittle are paired, you are ready to control it:
 ## Known Issues
 * _GYRO_ button is not working properly.
 * Sometimes Bittle won't listen to movement commands.
-* Sometimes trying to connect to Bittle will cause it to don't listen to connections, making it necessary to reboot.
+* Sometimes trying to connect to Bittle will cause it to not listen to connections, making it necessary to reboot.
 
 ## Roadmap
 * Add a simple view mode, with less buttons on screen.
